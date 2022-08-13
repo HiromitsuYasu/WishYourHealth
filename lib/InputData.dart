@@ -40,7 +40,6 @@ class _InputDataState extends State<InputData> {
               child: Text('Registration'),
               onPressed: () {
                 // TODO: 新規登録
-                final hobbyText = myController.text;
                 print(myController.text);
               },
             ),

@@ -4,12 +4,14 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 
+//TODO health.dartのExampleをそのまま持ってきたから解読する
 
 class HealthApp extends StatefulWidget {
   @override
   _HealthAppState createState() => _HealthAppState();
 }
 
+// 複数の定数を1つのクラスとしてまとめている
 enum AppState {
   DATA_NOT_FETCHED,
   FETCHING_DATA,
@@ -30,25 +32,23 @@ class _HealthAppState extends State<HealthApp> {
   // create a HealthFactory for use in the app
   HealthFactory health = HealthFactory();
 
+
   /// Fetch data points from the health plugin and show them in the app.
   Future fetchData() async {
     setState(() => _state = AppState.FETCHING_DATA);
+    print("-----------test1");
 
     // define the types to get
     final types = [
-      HealthDataType.STEPS,
-      HealthDataType.WEIGHT,
-      HealthDataType.HEIGHT,
-      HealthDataType.BLOOD_GLUCOSE,
       HealthDataType.WORKOUT,
+      HealthDataType.ACTIVE_ENERGY_BURNED,
+      HealthDataType.EXERCISE_TIME,
       // Uncomment these lines on iOS - only available on iOS
       // HealthDataType.AUDIOGRAM
     ];
 
     // with coresponsing permissions
     final permissions = [
-      HealthDataAccess.READ,
-      HealthDataAccess.READ,
       HealthDataAccess.READ,
       HealthDataAccess.READ,
       HealthDataAccess.READ,
@@ -64,6 +64,7 @@ class _HealthAppState extends State<HealthApp> {
     bool requested =
     await health.requestAuthorization(types, permissions: permissions);
     print('requested: $requested');
+    print("-----------test2");
 
     // If we are trying to read Step Count, Workout, Sleep or other data that requires
     // the ACTIVITY_RECOGNITION permission, we need to request the permission first.
@@ -75,6 +76,7 @@ class _HealthAppState extends State<HealthApp> {
 
     if (requested) {
       try {
+        print("-----------test3");
         // fetch health data
         List<HealthDataPoint> healthData =
         await health.getHealthDataFromTypes(yesterday, now, types);
@@ -105,19 +107,19 @@ class _HealthAppState extends State<HealthApp> {
 
   /// Add some random health data.
   Future addData() async {
+    print("-----------test4");
     final now = DateTime.now();
-    final earlier = now.subtract(Duration(minutes: 20));
+    final earlier = now.subtract(Duration(minutes: 1));
 
     final types = [
-      HealthDataType.STEPS,
-      HealthDataType.HEIGHT,
-      HealthDataType.BLOOD_GLUCOSE,
-      HealthDataType.WORKOUT, // Requires Google Fit on Android
+      HealthDataType.WORKOUT,
+      HealthDataType.ACTIVE_ENERGY_BURNED,
+      HealthDataType.EXERCISE_TIME,
+      // Requires Google Fit on Android
       // Uncomment these lines on iOS - only available on iOS
       // HealthDataType.AUDIOGRAM,
     ];
     final rights = [
-      HealthDataAccess.WRITE,
       HealthDataAccess.WRITE,
       HealthDataAccess.WRITE,
       HealthDataAccess.WRITE,
@@ -127,9 +129,9 @@ class _HealthAppState extends State<HealthApp> {
       HealthDataAccess.READ_WRITE,
       HealthDataAccess.READ_WRITE,
       HealthDataAccess.READ_WRITE,
-      HealthDataAccess.READ_WRITE,
       // HealthDataAccess.READ_WRITE,
     ];
+    // lateは使用しない場合でも初期化されないのでコスト削減できる
     late bool perm;
     bool? hasPermissions =
     await HealthFactory.hasPermissions(types, permissions: rights);
@@ -186,6 +188,7 @@ class _HealthAppState extends State<HealthApp> {
   }
 
   /// Fetch steps from the health plugin and show them in the app.
+  /// ここを参考にすれば値の扱い方がわかりそう
   Future fetchStepData() async {
     int? steps;
 
@@ -198,6 +201,7 @@ class _HealthAppState extends State<HealthApp> {
     if (requested) {
       try {
         steps = await health.getTotalStepsInInterval(midnight, now);
+        print("-----------test7");
       } catch (error) {
         print("Caught exception in getTotalStepsInInterval: $error");
       }
